@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Boat;
 use App\Form\BoatType;
+use App\Service\MapManager;
 use App\Repository\BoatRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -33,14 +34,14 @@ class BoatController extends AbstractController
     }
 
 
-     // Move the boat to N , W, S or E
+     // Move the boat to N , W, S or E and stop if out the map
     
     /**
      * Move the boat to coord x,y
      * @Route("/direction/{direction}", name = "moveDirection", requirements= {"direction" = "[N => \w, S => \w, W => \w, E => \w]"})
      */
 
-    public function moveDirection(string $direction, BoatRepository $boatRepository, EntityManagerInterface $em): Response
+    public function moveDirection(string $direction, BoatRepository $boatRepository, EntityManagerInterface $em, MapManager $mapManager): Response
     {
        
         $boat = $boatRepository->findOneBy([]);
@@ -62,6 +63,14 @@ class BoatController extends AbstractController
         } else if ($direction === "N")
         {
             $boat->setCoordY( $boatY-1);
+        }
+
+        
+        //test if boat's coord and tile's coord are the same 
+        $tile = $mapManager->tileExists($boat->getCoordX(),$boat->getcoordY());
+        if (!$tile){
+             $this->addFlash('warning', 'Cette direction est impossible');
+            return $this->redirectToRoute('map');
         }
 
         $em->flush();
