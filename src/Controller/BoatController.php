@@ -32,7 +32,8 @@ class BoatController extends AbstractController
         return $this->redirectToRoute('map');
     }
 
-        // Move the boat to N , W, S or E
+
+     // Move the boat to N , W, S or E
     
     /**
      * Move the boat to coord x,y
