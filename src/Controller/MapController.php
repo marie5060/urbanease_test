@@ -37,4 +37,35 @@ class MapController extends AbstractController
             'tile' => $tile,
         ]);
     }
+
+
+    //method to start a new game and reset coords boat, and put treasure on a new tile
+    /**
+    * @Route("/start", name="start")
+    */
+    public function start(BoatRepository $boatRepository, EntityManagerInterface $em, TileRepository $tileRepository, MapManager $mapManager)
+    {
+        // set coord of boat 
+        $boat = $boatRepository->findOneBy([]);
+        $boat->setCoordX(0);
+        $boat->setCoordY(0);
+        $em->persist($boat);
+
+        //pull all tiles on hasTreasure(false) 
+        $tiles = $tileRepository->findAll();
+        foreach ($tiles as $tile) {
+        $tile->setHasTreasure(false);
+        $em->persist($tile);
+        }
+        //and put a new one on a randomIsland
+        $treasureIsland = $mapManager->getRandomIsland();
+        $treasureIsland->setHasTreasure(true);
+        $em->persist($treasureIsland);
+       
+        $em->flush();
+
+        return $this->redirectToRoute('map');
+
+    }
+
 }
