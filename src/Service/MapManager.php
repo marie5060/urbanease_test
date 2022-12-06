@@ -19,4 +19,15 @@ class MapManager
         //check if Tile's coord exist and return a bool
         return $tile ? true : false ;
     }
+    
+    public function getRandomIsland(int $x,int $y) : Tile
+    {
+        //get all tiles with island type
+        $tiles = $this->tileRepository->findByType(['type'=>'island']);
+        //get one random islands from the array
+        $randomIsland = array_rand($titles,1);
+        //return randomIsland
+        return $randomIsland;
+    }
+
 }
