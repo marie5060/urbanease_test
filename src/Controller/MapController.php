@@ -8,6 +8,8 @@ use Symfony\Component\Routing\Annotation\Route;
 use App\Entity\Tile;
 use App\Repository\BoatRepository;
 use App\Repository\TileRepository;
+use Doctrine\ORM\EntityManagerInterface;
+use App\Service\MapManager;
 
 class MapController extends AbstractController
 {
@@ -43,7 +45,7 @@ class MapController extends AbstractController
     /**
     * @Route("/start", name="start")
     */
-    public function start(BoatRepository $boatRepository, EntityManagerInterface $em, TileRepository $tileRepository, MapManager $mapManager)
+    public function start(BoatRepository $boatRepository, EntityManagerInterface $em, TileRepository $tileRepository, MapManager $mapManager) : Response
     {
         // set coord of boat 
         $boat = $boatRepository->findOneBy([]);

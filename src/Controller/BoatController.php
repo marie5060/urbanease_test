@@ -35,7 +35,6 @@ class BoatController extends AbstractController
 
 
      // Move the boat to N , W, S or E and stop if out the map
-    
     /**
      * Move the boat to coord x,y
      * @Route("/direction/{direction}", name = "moveDirection", requirements= {"direction" = "[N => \w, S => \w, W => \w, E => \w]"})
@@ -64,13 +63,25 @@ class BoatController extends AbstractController
         {
             $boat->setCoordY( $boatY-1);
         }
-
+        
         
         //test if boat's coord and tile's coord are the same 
         $tile = $mapManager->tileExists($boat->getCoordX(),$boat->getcoordY());
+        //test if boat's coord and tile with treasure coord are the same
+        $treasure = $mapManager->checkTreasure($boat);
+
+        //if out of the map
         if (!$tile){
-             $this->addFlash('warning', 'Cette direction est impossible');
+             $this->addFlash('warning', 'This direction is impossible');
             return $this->redirectToRoute('map');
+        //if not    
+        } else {
+            //and if on tresureIsland
+            if($treasure){
+            $this->addFlash('info','Congrats ! You find the hidden treasure');
+            }
+            $em->persist($boat);
+            $em->flush();
         }
 
         $em->flush();
